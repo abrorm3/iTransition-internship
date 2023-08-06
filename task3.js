@@ -35,7 +35,10 @@ var GameRules = /** @class */ (function () {
     }
     GameRules.prototype.determineWinner = function (playerMove, computerMove) {
         var half = (this.moves.length - 1) / 2;
-        if ((computerMove - playerMove + this.moves.length) % this.moves.length <= half) {
+        if (playerMove === computerMove) {
+            return 'draw';
+        }
+        else if ((computerMove - playerMove + this.moves.length) % this.moves.length <= half) {
             return 'lose';
         }
         else {
@@ -104,7 +107,12 @@ var RockPaperScissorsGame = /** @class */ (function () {
                     var result = _this.gameRules.determineWinner(playerMove, computerMove);
                     console.log("Your move: ".concat(playerMoveName));
                     console.log("Computer move: ".concat(computerMoveName));
-                    console.log("You ".concat(result, "!"));
+                    if (result === 'draw') {
+                        console.log('It\'s draw!');
+                    }
+                    else {
+                        console.log("You ".concat(result, "!"));
+                    }
                     console.log("HMAC key: ".concat(_this.key.toString('hex').toUpperCase()));
                     rl.close();
                 }

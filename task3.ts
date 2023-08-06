@@ -24,12 +24,15 @@ class GameRules {
 
   determineWinner(playerMove: number, computerMove: number): string {
     const half = (this.moves.length - 1) / 2;
-    if ((computerMove - playerMove + this.moves.length) % this.moves.length <= half) {
+    if (playerMove === computerMove) {
+      return 'draw';
+    } else if ((computerMove - playerMove + this.moves.length) % this.moves.length <= half) {
       return 'lose';
     } else {
       return 'win';
     }
   }
+  
 
   generateTable(): string[][] {
     const table: string[][] = [];
@@ -104,7 +107,11 @@ class RockPaperScissorsGame {
 
           console.log(`Your move: ${playerMoveName}`);
           console.log(`Computer move: ${computerMoveName}`);
-          console.log(`You ${result}!`);
+          if(result ==='draw'){
+            console.log('It\'s draw!')
+          }else{
+            console.log(`You ${result}!`);
+          }
           console.log(`HMAC key: ${this.key.toString('hex').toUpperCase()}`);
 
           rl.close();
