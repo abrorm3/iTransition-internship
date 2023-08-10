@@ -20,14 +20,14 @@ class authController {
       if (!errors.isEmpty()) {
         return res.status(400).json({ message: "Registrator error occured", errors });
       }
-      const { username, password } = req.body;
-      const candidate = await User.findOne({ username });
+      const { email, password } = req.body;
+      const candidate = await User.findOne({ email });
       if (candidate) {
-        return res.status(400).json({ message: "Username is already registered" });
+        return res.status(400).json({ message: "Email is already registered" });
       }
       const hashPassword = bcrypt.hashSync(password, 7);
       const userRole = await Role.findOne({value: "USER"})
-      const user = new User({ username, password: hashPassword, roles: [userRole.value] });
+      const user = new User({ email, password: hashPassword, roles: [userRole.value] });
       await user.save();
       return res.json({ message: "Registration successful" });
     } catch (e) {
@@ -37,14 +37,14 @@ class authController {
   }
   async login(req, res) {
     try {
-      const { username, password } = req.body;
-      const user = await User.findOne({ username });
+      const { email, password } = req.body;
+      const user = await User.findOne({ email });
       if (!user) {
-        return res.status(400).json({ message: `Username ${username} not found` });
+        return res.status(400).json({ message: `Email ${email} not found` });
       }
       const validPassword = bcrypt.compareSync(password, user.password);
       if (!validPassword) {
-        return res.status(400).json({ message: `Password or username is not valid` });
+        return res.status(400).json({ message: `Password or email is not valid` });
       }
       const token = generateAccessToken(user._id, user.roles);
       return res.json({token})
