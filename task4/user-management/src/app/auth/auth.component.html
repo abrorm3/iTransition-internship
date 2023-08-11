@@ -1,0 +1,21 @@
+<div class="flex items-center h-screen bg-sky-300">
+  <div id="auth" class="w-full max-w-md mx-auto bg-cyan-100 rounded-xl p-11">
+    <h1 class="text-center pb-10 text-xl">User Management</h1>
+    <div class="loadingSpinner" *ngIf="isLoading">
+      <app-loading-spinner></app-loading-spinner>
+    </div>
+    <form #authForm="ngForm" (ngSubmit)="onSubmit(authForm)" *ngIf="!isLoading">
+      <div class="email-form">
+        <input type="email" id="email" ngModel required name="email" placeholder="Email" class="w-full py-2 px-4 rounded border focus:outline-none focus:border-blue-500">
+      </div>
+      <div class="password-form mt-2 relative"> <!-- Use relative positioning for the container -->
+        <input [type]="changetype ? 'text' : 'password'" name="password" id="password" required ngModel placeholder="Password" class="w-full py-2 px-4 rounded border focus:outline-none focus:border-blue-500 pr-10"> <!-- Add "pr-10" for padding on the right side -->
+        <img (click)="viewpassword()" [src]="visible ? 'assets/icons/eye-closed-icon.svg' : 'assets/icons/eye-icon.svg'" alt="eye icon" width="28px" class="cursor-pointer absolute top-1/2 transform -translate-y-1/2 right-2"> <!-- Use absolute positioning to place the icon within the input -->
+      </div>
+      <div class="actionButtons mt-4 flex flex-col items-center"> <!-- Use flex-col to arrange items in a column and align them to center -->
+        <button class="bg-sky-200 w-11/12 py-2 px-6 rounded">{{isLoginMode ? "Login" : "Sign Up"}}</button>
+        <p class="mt-2">Switch to <span (click)="onSwitchMode()" class="text-sky-400 cursor-pointer">{{isLoginMode ? 'Sign Up' : 'Login'}}</span></p>
+      </div>
+    </form>
+  </div>
+</div>
