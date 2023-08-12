@@ -59,24 +59,7 @@ class authController {
       res.status(400).json({ message: "Login error" });
     }
   }
-  async checkAuthStatus(req, res) {
-    try {
-      const token = req.headers.authorization;
-      if (!token) {
-        return res.status(401).json({ message: "No token provided" });
-      }
-      jwt.verify(token, secret, (err, decoded) => {
-        if (err) {
-          return res.status(401).json({ message: "Invalid token" });
-        }
-        // Token is valid, user is authenticated
-        return res.status(200).json({ authenticated: true });
-      });
-    } catch (e) {
-      console.log(e);
-      res.status(500).json({ message: "Server error" });
-    }
-  }
+
   async getUsers(req, res) {
     try {
       // TO initialize user roles in mongoDB collections
