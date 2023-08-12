@@ -15,6 +15,7 @@ export class AuthComponent {
   changetype:boolean=false;
   errorMessage: string = '';
 
+  
   constructor(private authService:AuthService, private router: Router){}
 
   onSubmit(form:NgForm){
@@ -23,9 +24,9 @@ export class AuthComponent {
     }
     const email = form.value.email;
     const password = form.value.password;
-
     this.isLoading=true;
-    if (this.isLoginMode) {
+
+    if (this.isLoginMode) { //LOGIN
       this.authService.login({ email, password })
         .subscribe({
           next:(resData)=>{
@@ -40,8 +41,22 @@ export class AuthComponent {
           }
         })
     }
+    if(!this.isLoginMode){ //SIGN IN
+      this.authService.signup({ email, password})
+      .subscribe({
+        next:(resData)=>{
+          console.log('Registered!', resData.token);
+          this.isLoading=false;
+          this.router.navigate(['/user-management'])
+        },
+        error:(errorMessage)=>{
+          this.errorMessage = errorMessage.toString().split(': ')[1];
+          this.isLoading=false;
+          console.error('Registration failed:', errorMessage);
+        }
+      })
+    }
 
-    // Reset the form after submission if needed
     form.reset();
 }
   viewpassword(){

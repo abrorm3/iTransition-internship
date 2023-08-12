@@ -18,10 +18,14 @@ class authController {
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({ message: "Registrator error occured", errors });
+        return res.status(400).json({ message: "Password should be longer than 4 and less than 20 characters", errors });
       }
       const { email, password } = req.body;
+      if (!/\S+@\S+\.\S+/.test(email)) {
+        return res.status(400).json({ message: "Invalid email format" });
+      }
       const candidate = await User.findOne({ email });
+      
       if (candidate) {
         return res.status(400).json({ message: "Email is already registered" });
       }

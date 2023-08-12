@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { backend } from '../app.backend';
-import { LoginRequest, LoginResponse } from './auth.model';
+import { AuthRequest, AuthResponse } from './auth.model';
 import { catchError, throwError } from 'rxjs';
 
 @Injectable({
@@ -12,8 +12,14 @@ export class AuthService {
 
   constructor(private http: HttpClient) { }
 
-  login(credentials: LoginRequest){
-    return this.http.post<LoginResponse>(`${backend}/auth/login`, credentials)
+  login(credentials: AuthRequest){
+    return this.http.post<AuthResponse>(`${backend}/auth/login`, credentials)
+    .pipe(
+      catchError(this.handleError)
+    )
+  }
+  signup(credentials:AuthRequest){
+    return this.http.post<AuthResponse>(`${backend}/auth/registration`, credentials)
     .pipe(
       catchError(this.handleError)
     )
