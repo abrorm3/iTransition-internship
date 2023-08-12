@@ -18,7 +18,7 @@ export class AuthService {
         catchError(this.handleError),
         map(response => {
           if (response.token) {
-            this.setAuthToken(response.token); // Store the token in local storage
+            this.setAuthToken(response.token);
           }
           return response;
         })
@@ -28,7 +28,13 @@ export class AuthService {
   signup(credentials:AuthRequest){
     return this.http.post<AuthResponse>(`${backend}/auth/registration`, credentials)
     .pipe(
-      catchError(this.handleError)
+      catchError(this.handleError),
+      map(response => {
+        if (response.token) {
+          this.setAuthToken(response.token);
+        }
+        return response;
+      })
     )
   }
   logout(){

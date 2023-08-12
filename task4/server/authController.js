@@ -33,9 +33,10 @@ class authController {
       }
       const hashPassword = bcrypt.hashSync(password, 7);
       const userRole = await Role.findOne({ value: "USER" });
-      const user = new User({ email, password: hashPassword, roles: [userRole.value] });
+      const user = new User({ email, password: hashPassword, roles: [userRole.value],registrationTime: new Date(), lastLoginTime: new Date(),});
       await user.save();
-      return res.json({ message: "Registration successful" });
+      const token = generateAccessToken(user._id, user.roles);
+      return res.json({ message: "Registration successful", token });
     } catch (e) {
       console.log(e);
       res.status(400).json({ message: "Registration error" });
@@ -52,6 +53,8 @@ class authController {
       if (!validPassword) {
         return res.status(400).json({ message: `Password or email is not valid` });
       }
+      user.lastLoginTime = new Date();
+            await user.save();
       const token = generateAccessToken(user._id, user.roles);
       return res.json({ token });
     } catch (e) {

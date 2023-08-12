@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../auth/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-user-management',
@@ -7,9 +8,11 @@ import { AuthService } from '../auth/auth.service';
   styleUrls: ['./user-management.component.css']
 })
 export class UserManagementComponent {
-  constructor(private authService:AuthService){}
+  constructor(private authService:AuthService, private router:Router){}
 
   logout(){
     this.authService.logout();
+    this.router.navigate(['/auth']);
   }
+  
 }
