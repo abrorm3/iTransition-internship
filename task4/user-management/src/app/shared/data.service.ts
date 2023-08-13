@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable, catchError, of } from 'rxjs';
 import { backend } from '../app.backend';
 
 @Injectable({
@@ -24,7 +24,18 @@ fetchUsers(): Observable<any[]> {
   }
 }
   blockUser(userId: string): Observable<any> {
-    const url = `${backend}/users/${userId}/block`;
+    const url = `${backend}/auth/users/${userId}/block`;
     return this.http.put(url, null);
+  }
+
+  deleteUser(userId: string): Observable<any> {
+    const url = `${backend}/auth/users/${userId}/delete`;
+    return this.http.delete(url).pipe(
+      catchError((error) => {
+        console.error('Error deleting user:', error);
+        // You can handle the error here (e.g., show an error message)
+        return of({}); // Return an empty object to handle the error
+      })
+    );
   }
 }

@@ -13,5 +13,6 @@ router.post('/login', controller.login)
 router.get('/users', roleMiddleware(['USER', 'ADMIN']), controller.getUsers)
 // router.get('/users', controller.getUsers)
 router.put('/users/:userId/block', controller.blockUser)
+router.put('/users/:userId/delete', controller.deleteUser)
 
 module.exports = router;
