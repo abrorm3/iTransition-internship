@@ -2,7 +2,7 @@ const User = require("./models/User");
 const Role = require("./models/Role");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const { ObjectID } = require('mongodb');
+const { MongoClient, ObjectId } = require('mongodb');
 const { validationResult } = require("express-validator");
 const { secret } = require("./config");
 
@@ -88,14 +88,14 @@ class authController {
 
     try {
       // Establish a connection to the MongoDB database
-      const client = await MongoClient.connect('https://user-management-nodejs.onrender.com', {
+      const client = await MongoClient.connect('mongodb+srv://abrormukhammadiev:789654123Abror@clustertask4.jnix1cj.mongodb.net/?retryWrites=true&w=majority', {
         useNewUrlParser: true,
         useUnifiedTopology: true,
       });
-      const db = client.db('user-management-task4');
+      const db = client.db('test');
 
       // Delete the user using the provided user ID
-      const result = await db.collection('users').deleteOne({ _id: new ObjectID(userId) });
+      const result = await db.collection('users').deleteOne({ _id: new ObjectId(userId) });
 
       if (result.deletedCount === 1) {
         res.status(200).json({ message: 'User deleted successfully' });
