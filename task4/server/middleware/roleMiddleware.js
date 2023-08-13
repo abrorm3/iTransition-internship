@@ -22,6 +22,7 @@ module.exports = function(roles){
             if(!hasRole){
                 return res.status(403).json({message:"User is not authorized"});
             }
+
             next();
         }catch(err){
             console.log(err);

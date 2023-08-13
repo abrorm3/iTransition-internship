@@ -31,13 +31,15 @@
         <td class="px-6 py-4 whitespace-nowrap">
           <input type="checkbox" class="form-checkbox" />
         </td>
-        <td>{{ user.id }}</td>
+        <td>{{ user._id }}</td>
         <td>{{ user.name }}</td>
         <td>{{ user.email }}</td>
         <td>{{ user.lastLoginTime }}</td>
         <td>{{ user.registrationTime }}</td>
         <td>{{ user.status }}</td>
+        <td><button (click)="blockUser(user._id)">Block</button></td>
       </tr>
     </tbody>
   </table>
+  <button (click)="getUsers()">FETCH</button>
 </div>

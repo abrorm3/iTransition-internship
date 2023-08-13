@@ -62,14 +62,36 @@ class authController {
       res.status(400).json({ message: "Login error" });
     }
   }
+  async blockUser(req, res) {
+    try {
+      const { userId } = req.params;
+
+      const user = await User.findByIdAndUpdate(
+        userId,
+        { $addToSet: { roles: 'BLOCK' } }, // Add "BLOCK" role to roles array
+        { new: true }
+      );
+
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      return res.json({ message: 'User blocked successfully' });
+    } catch (e) {
+      console.log(e);
+      res.status(500).json({ message: 'An error occurred' });
+    }
+  }
 
   async getUsers(req, res) {
     try {
       // TO initialize user roles in mongoDB collections
       // const userRole = new Role();
       // const adminRole = new Role({value:"ADMIN"})
+      // const blockRole = new Role({value:"BLOCK"})
       // await userRole.save()
       // await adminRole.save()
+      // await blockRole.save()
 
       const users = await User.find();
       res.json(users);
