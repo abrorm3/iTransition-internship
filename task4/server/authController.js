@@ -2,7 +2,7 @@ const User = require("./models/User");
 const Role = require("./models/Role");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const { MongoClient, ObjectId } = require('mongodb');
+const { MongoClient, ObjectId } = require("mongodb");
 const { validationResult } = require("express-validator");
 const { secret } = require("./config");
 
@@ -34,7 +34,13 @@ class authController {
       }
       const hashPassword = bcrypt.hashSync(password, 7);
       const userRole = await Role.findOne({ value: "USER" });
-      const user = new User({ email, password: hashPassword, roles: [userRole.value],registrationTime: new Date(), lastLoginTime: new Date(),});
+      const user = new User({
+        email,
+        password: hashPassword,
+        roles: [userRole.value],
+        registrationTime: new Date(),
+        lastLoginTime: new Date(),
+      });
       await user.save();
       const token = generateAccessToken(user._id, user.roles);
       return res.json({ message: "Registration successful", token });
@@ -50,12 +56,16 @@ class authController {
       if (!user) {
         return res.status(400).json({ message: `Email ${email} not found` });
       }
+      if (user.roles.includes("BLOCK")) {
+        return res.status(403).json({ message: "User is blocked", isBlocked: true });
+      }
+
       const validPassword = bcrypt.compareSync(password, user.password);
       if (!validPassword) {
         return res.status(400).json({ message: `Password or email is not valid` });
       }
       user.lastLoginTime = new Date();
-            await user.save();
+      await user.save();
       const token = generateAccessToken(user._id, user.roles);
       return res.json({ token });
     } catch (e) {
@@ -69,18 +79,18 @@ class authController {
 
       const user = await User.findByIdAndUpdate(
         userId,
-        { $addToSet: { roles: 'BLOCK' } }, // Add "BLOCK" role to roles array
+        { $addToSet: { roles: "BLOCK" } }, // Add "BLOCK" role to roles array
         { new: true }
       );
 
       if (!user) {
-        return res.status(404).json({ message: 'User not found' });
+        return res.status(404).json({ message: "User not found" });
       }
 
-      return res.json({ message: 'User blocked successfully' });
+      return res.json({ message: "User blocked successfully" });
     } catch (e) {
       console.log(e);
-      res.status(500).json({ message: 'An error occurred' });
+      res.status(500).json({ message: "An error occurred" });
     }
   }
   async deleteUser(req, res) {
@@ -88,25 +98,28 @@ class authController {
 
     try {
       // Establish a connection to the MongoDB database
-      const client = await MongoClient.connect('mongodb+srv://abrormukhammadiev:789654123Abror@clustertask4.jnix1cj.mongodb.net/?retryWrites=true&w=majority', {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      });
-      const db = client.db('test');
+      const client = await MongoClient.connect(
+        "mongodb+srv://abrormukhammadiev:789654123Abror@clustertask4.jnix1cj.mongodb.net/?retryWrites=true&w=majority",
+        {
+          useNewUrlParser: true,
+          useUnifiedTopology: true,
+        }
+      );
+      const db = client.db("test");
 
       // Delete the user using the provided user ID
-      const result = await db.collection('users').deleteOne({ _id: new ObjectId(userId) });
+      const result = await db.collection("users").deleteOne({ _id: new ObjectId(userId) });
 
       if (result.deletedCount === 1) {
-        res.status(200).json({ message: 'User deleted successfully' });
+        res.status(200).json({ message: "User deleted successfully" });
       } else {
-        res.status(404).json({ message: 'User not found' });
+        res.status(404).json({ message: "User not found" });
       }
     } catch (error) {
-      console.error('Error deleting user:', error);
-      res.status(500).json({ message: 'An error occurred while deleting user' });
-    }}
-  
+      console.error("Error deleting user:", error);
+      res.status(500).json({ message: "An error occurred while deleting user" });
+    }
+  }
 
   async getUsers(req, res) {
     try {
@@ -124,6 +137,55 @@ class authController {
       console.log(e);
     }
   }
+  async blockUsers(req, res) {
+    const userIds = req.query.userIds.split(",");
+  
+    try {
+      const result = await User.updateMany(
+        { _id: { $in: userIds } },
+        { $set: { roles: ["BLOCK"] } } 
+      );
+  
+      console.log("Modified Count:", result.modifiedCount);
+  
+      if (result.modifiedCount > 0) {
+        return res.status(200).json({ message: "Users blocked successfully" });
+      } else {
+        return res.status(404).json({ message: "No users found to block" });
+      }
+    } catch (error) {
+      console.error("Error blocking users:", error);
+      return res
+        .status(500)
+        .json({ message: "An error occurred while blocking users" });
+    }
+  }
+  async unblockUsers(req, res) {
+    const userIds = req.query.userIds.split(",");
+    
+    try {
+      const result = await User.updateMany(
+        { _id: { $in: userIds } },
+        { $pull: { roles: "BLOCK" } } 
+      );
+  
+      console.log("Modified Count:", result.modifiedCount);
+  
+      if (result.modifiedCount > 0) {
+        return res.status(200).json({ message: "Users unblocked successfully" });
+      } else {
+        return res.status(404).json({ message: "No users found to unblock" });
+      }
+    } catch (error) {
+      console.error("Error unblocking users:", error);
+      return res
+        .status(500)
+        .json({ message: "An error occurred while unblocking users" });
+    }
+  }
+  
+  
+  
 }
 
 module.exports = new authController();

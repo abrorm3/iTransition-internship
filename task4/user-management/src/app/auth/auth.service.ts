@@ -15,7 +15,12 @@ export class AuthService {
   login(credentials: AuthRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${backend}/auth/login`, credentials)
       .pipe(
-        catchError(this.handleError),
+        catchError(error => {
+          if (error.status === 403 && error.error.isBlocked) {
+            return throwError(error.error.message);
+          }
+          return this.handleError(error);
+        }),
         map(response => {
           if (response.token) {
             this.setAuthToken(response.token);
@@ -24,6 +29,7 @@ export class AuthService {
         })
       );
   }
+
 
   signup(credentials:AuthRequest){
     return this.http.post<AuthResponse>(`${backend}/auth/registration`, credentials)

@@ -15,7 +15,7 @@ export class AuthComponent {
   changetype:boolean=false;
   errorMessage: string = '';
 
-  
+
   constructor(private authService:AuthService, private router: Router){}
 
   onSubmit(form:NgForm){
@@ -28,18 +28,18 @@ export class AuthComponent {
 
     if (this.isLoginMode) { //LOGIN
       this.authService.login({ email, password })
-        .subscribe({
-          next:(resData)=>{
-            console.log('Logged in!', resData.token);
-            this.isLoading=false;
-            this.router.navigate(['/user-management'])
-          },
-          error:(errorMessage)=>{
-            this.errorMessage = errorMessage.toString().split(': ')[1];
-            this.isLoading=false;
-            console.error('Login failed:', errorMessage);
-          }
-        })
+    .subscribe(
+      resData => {
+        console.log('Logged in!', resData.token);
+        this.isLoading = false;
+        this.router.navigate(['/user-management']);
+      },
+      errorMessage => {
+        this.errorMessage = errorMessage;
+        this.isLoading = false;
+        console.error('Login failed:', errorMessage);
+      }
+    );
     }
     if(!this.isLoginMode){ //SIGN IN
       this.authService.signup({ email, password})

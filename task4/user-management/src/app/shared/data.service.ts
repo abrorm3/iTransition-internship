@@ -38,4 +38,14 @@ fetchUsers(): Observable<any[]> {
       })
     );
   }
+  blockUsers(userIds: string[]) {
+    return this.http.put(`${backend}/auth/users/block`, null, {
+      params: { userIds: userIds.join(',') }
+    });
+  }
+  unblockUsers(userIds: string[]) {
+    return this.http.put(`${backend}/auth/users/unblock`, null, {
+      params: { userIds: userIds.join(',') }
+    });
+  }
 }
