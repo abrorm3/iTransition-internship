@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../auth/auth.service';
 import { Router } from '@angular/router';
 import { DataService } from '../shared/data.service';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-user-management',
@@ -14,7 +15,8 @@ export class UserManagementComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private router: Router,
-    private dataService: DataService
+    private dataService: DataService,
+    private datePipe: DatePipe
   ) {}
 
   ngOnInit(): void {
@@ -26,10 +28,10 @@ export class UserManagementComponent implements OnInit {
         ...user,
         status: user.roles.includes('BLOCK') ? 'Blocked' : 'Active',
         selected: false,
+        lastLoginTime: this.formatDate(user.lastLoginTime),
+        registrationTime: this.formatDate(user.registrationTime)
       }));
-      console.log(this.users); // Assign the updated users array
       const userIdFromLocalStorage = localStorage.getItem('userId');
-      console.log(userIdFromLocalStorage);
 
       const blockedUser = this.users.find(
         (user) =>
@@ -48,9 +50,17 @@ export class UserManagementComponent implements OnInit {
       }
     });
   }
+  private formatDate(date: string | null): string {
+    if (!date) {
+      return '';
+    }
+    const parsedDate = new Date(date);
+    return this.datePipe.transform(parsedDate, 'medium') || '';
+  }
+
 
   selectAllChanged() {
-    this.selectAll = !this.selectAll; // Toggle the selectAll property
+    this.selectAll = !this.selectAll;
 
     for (const user of this.users) {
       user.selected = this.selectAll;
@@ -59,16 +69,6 @@ export class UserManagementComponent implements OnInit {
   logout() {
     this.authService.logout();
     this.router.navigate(['/auth']);
-  }
-  blockUser(userId: string) {
-    this.dataService.blockUser(userId).subscribe(
-      () => {
-        // Handle success (e.g., update UI or show a success message)
-      },
-      (error) => {
-        // Handle error (e.g., show an error message)
-      }
-    );
   }
   blockSelected() {
     this.selectAll = false;

@@ -30,7 +30,7 @@ export class AuthComponent {
     if (this.isLoginMode) { //LOGIN
       this.authService.login({ email, password }).subscribe({
         next: (resData: AuthResponse) => {
-          console.log('Logged in!', resData.token, resData.userId);
+          // console.log('Logged in!', resData.token, resData.userId);
           this.isLoading = false;
           this.router.navigate(['/user-management']);
         },

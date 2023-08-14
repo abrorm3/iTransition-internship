@@ -31,13 +31,12 @@ fetchUsers(): Observable<any[]> {
   deleteUsers(userIds: string[]) {
     const requests: Observable<any>[] = [];
 
-    // Create an array of observables for each user ID to be deleted
     userIds.forEach(userId => {
       const url = `${backend}/auth/users/${userId}/delete`;
       requests.push(this.http.delete(url).pipe(
         catchError((error) => {
           console.error(`Error deleting user ${userId}:`, error);
-          return of({}); // Return an empty object to handle the error
+          return of({});
         })
       ));
     });
