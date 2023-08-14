@@ -1,27 +1,33 @@
+
+
 <div class="p-4">
-  <div class="flex flex-col-reverse lg:flex-row justify-between mb-4">
-    <div class="flex items-center mb-2 lg:mb-0">
+  <div class="flex justify-between mb-4">
+    <div class="flex items-center">
       <input type="checkbox" class="form-checkbox w-6 h-6 mr-3" [(ngModel)]="selectAll" (click)="selectAllChanged()"/>
-      <label class="mr-3 text-lg" for="checkbox">Select all</label>
+      <label class="mr-3" for="checkbox text-lg">Select all</label>
       <div class="ml-2 flex space-x-2">
         <button class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded" (click)="blockSelected()">Block</button>
         <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded" (click)="unblockSelected()">Unblock</button>
         <button class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded" (click)="deleteSelected()">Delete</button>
+
       </div>
+
     </div>
-    <div class="ml-auto flex justify-between lg:justify-end">
-      <button (click)="getUsers()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mb-2 lg:mb-0">
-        FETCH
-      </button>
-      <button (click)="logout()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+    <div class="ml-auto">
+      <button (click)="logout()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mb-4 mr-3">
         Logout
+      </button>
+      <button (click)="getUsers()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+        FETCH
       </button>
     </div>
   </div>
   <table class="min-w-full divide-y divide-gray-200">
+    <!-- Table headers -->
     <thead class="bg-gray-50">
       <tr>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+        </th>
         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Id</th>
         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
@@ -30,7 +36,9 @@
         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
       </tr>
     </thead>
+    <!-- Table data -->
     <tbody class="bg-white divide-y divide-gray-200">
+      <!-- Loop through users and create table rows -->
       <tr *ngFor="let user of users">
         <td class="px-6 py-4 whitespace-nowrap">
           <input type="checkbox" class="form-checkbox" [(ngModel)]="user.selected"/>
@@ -44,4 +52,5 @@
       </tr>
     </tbody>
   </table>
+
 </div>
