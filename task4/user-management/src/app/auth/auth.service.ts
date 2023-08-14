@@ -24,6 +24,7 @@ export class AuthService {
         map(response => {
           if (response.token) {
             this.setAuthToken(response.token);
+            this.setUserId(response.userId);
           }
           return response;
         })
@@ -48,6 +49,9 @@ export class AuthService {
   }
   setAuthToken(token: string): void {
     localStorage.setItem('user', token);
+  }
+  setUserId(userId: string): void {
+    localStorage.setItem('userId', userId);
   }
 
   removeAuthToken(): void {

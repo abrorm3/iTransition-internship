@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { AuthService } from './auth.service';
 import { Router } from '@angular/router';
+import { AuthResponse } from './auth.model';
 
 @Component({
   selector: 'app-auth',
@@ -27,20 +28,20 @@ export class AuthComponent {
     this.isLoading=true;
 
     if (this.isLoginMode) { //LOGIN
-      this.authService.login({ email, password })
-    .subscribe(
-      resData => {
-        console.log('Logged in!', resData.token);
-        this.isLoading = false;
-        this.router.navigate(['/user-management']);
-      },
-      errorMessage => {
-        this.errorMessage = errorMessage;
-        this.isLoading = false;
-        console.error('Login failed:', errorMessage);
-      }
-    );
+      this.authService.login({ email, password }).subscribe({
+        next: (resData: AuthResponse) => {
+          console.log('Logged in!', resData.token, resData.userId);
+          this.isLoading = false;
+          this.router.navigate(['/user-management']);
+        },
+        error: (errorMessage: any) => {
+          this.errorMessage = errorMessage;
+          this.isLoading = false;
+          console.error('Login failed:', errorMessage);
+        }
+      });
     }
+
     if(!this.isLoginMode){ //SIGN IN
       this.authService.signup({ email, password})
       .subscribe({

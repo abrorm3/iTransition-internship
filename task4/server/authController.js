@@ -11,7 +11,7 @@ const generateAccessToken = (id, roles) => {
     id,
     roles,
   };
-  return jwt.sign(payload, secret, { expiresIn: "24h" });
+  return jwt.sign(payload, secret, { expiresIn: "12h" });
 };
 
 class authController {
@@ -64,10 +64,12 @@ class authController {
       if (!validPassword) {
         return res.status(400).json({ message: `Password or email is not valid` });
       }
+      const userId = user._id;
+
       user.lastLoginTime = new Date();
       await user.save();
       const token = generateAccessToken(user._id, user.roles);
-      return res.json({ token });
+      return res.json({userId, token });
     } catch (e) {
       console.log(e);
       res.status(400).json({ message: "Login error" });
@@ -75,6 +77,7 @@ class authController {
   }
   async blockUser(req, res) {
     try {
+      
       const { userId } = req.params;
 
       const user = await User.findByIdAndUpdate(
@@ -130,7 +133,11 @@ class authController {
       // await userRole.save()
       // await adminRole.save()
       // await blockRole.save()
-
+      const user = User;
+      if (req.isBlocked) {
+        console.log("redireeect")
+        return res.redirect('/auth'); // Redirect the blocked user to /auth
+      }
       const users = await User.find();
       res.json(users);
     } catch (e) {
