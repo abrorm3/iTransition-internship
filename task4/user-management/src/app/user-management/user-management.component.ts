@@ -12,6 +12,8 @@ import { DatePipe } from '@angular/common';
 export class UserManagementComponent implements OnInit {
   users: any[] = [];
   selectAll: boolean = false;
+  userIdFromLocalStorage: string | null = null;
+
   constructor(
     private authService: AuthService,
     private router: Router,
@@ -31,18 +33,19 @@ export class UserManagementComponent implements OnInit {
         lastLoginTime: this.formatDate(user.lastLoginTime),
         registrationTime: this.formatDate(user.registrationTime)
       }));
-      const userIdFromLocalStorage = localStorage.getItem('userId');
+      this.users = this.sortUsersByLastLoginTimeDescending(this.users);
+      this.userIdFromLocalStorage = localStorage.getItem('userId');
 
       const blockedUser = this.users.find(
         (user) =>
-          user._id === userIdFromLocalStorage && user.status === 'Blocked'
+          user._id === this.userIdFromLocalStorage && user.status === 'Blocked'
       );
       if (blockedUser) {
         console.log('User is blocked.');
         this.router.navigate(['/auth']);
       }
       const isUserInList = this.users.some(
-        (user) => user._id === userIdFromLocalStorage
+        (user) => user._id === this.userIdFromLocalStorage
       );
       if (!isUserInList) {
         console.log('User not found or blocked. Navigating back to /auth.');
@@ -50,6 +53,7 @@ export class UserManagementComponent implements OnInit {
       }
     });
   }
+
   private formatDate(date: string | null): string {
     if (!date) {
       return '';
@@ -134,4 +138,12 @@ export class UserManagementComponent implements OnInit {
 
     this.getUsers();
   }
+  private sortUsersByLastLoginTimeDescending(users: any[]): any[] {
+    return users.sort((a, b) => {
+      const aTime = new Date(a.lastLoginTime).getTime();
+      const bTime = new Date(b.lastLoginTime).getTime();
+      return bTime - aTime;
+    });
+  }
+
 }
