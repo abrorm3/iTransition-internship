@@ -39,12 +39,12 @@
       <!-- Table data -->
       <tbody class="bg-white divide-y divide-gray-200">
         <!-- Loop through users and create table rows -->
-        <tr *ngFor="let user of users" [ngClass]="{'bg-green-700': user._id === userIdFromLocalStorage}" class="hover:bg-gray-200">
+        <tr *ngFor="let user of users" class="hover:bg-gray-200">
           <td class="px-6 py-4 whitespace-nowrap">
             <input type="checkbox" class="form-checkbox" [(ngModel)]="user.selected"/>
           </td>
           <td class="px-6 py-4">{{ user._id }}</td>
-          <td class="px-6 py-4">{{ user.name }}</td>
+          <td class="px-6 py-4"  [ngClass]="{'text-green-600': user._id === userIdFromLocalStorage}">{{ user._id === userIdFromLocalStorage ? 'Your account' : user.name }}</td>
           <td class="px-6 py-4">{{ user.email }}</td>
           <td class="px-6 py-4">{{ user.lastLoginTime }}</td>
           <td class="px-6 py-4">{{ user.registrationTime }}</td>
