@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, catchError, of } from 'rxjs';
+import { Observable, catchError, forkJoin, of } from 'rxjs';
 import { backend } from '../app.backend';
 
 @Injectable({
@@ -28,15 +28,20 @@ fetchUsers(): Observable<any[]> {
     return this.http.put(url, null);
   }
 
-  deleteUser(userId: string): Observable<any> {
-    const url = `${backend}/auth/users/${userId}/delete`;
-    return this.http.delete(url).pipe(
-      catchError((error) => {
-        console.error('Error deleting user:', error);
-        // You can handle the error here (e.g., show an error message)
-        return of({}); // Return an empty object to handle the error
-      })
-    );
+  deleteUsers(userIds: string[]) {
+    const requests: Observable<any>[] = [];
+
+    // Create an array of observables for each user ID to be deleted
+    userIds.forEach(userId => {
+      const url = `${backend}/auth/users/${userId}/delete`;
+      requests.push(this.http.delete(url).pipe(
+        catchError((error) => {
+          console.error(`Error deleting user ${userId}:`, error);
+          return of({}); // Return an empty object to handle the error
+        })
+      ));
+    });
+    return forkJoin(requests);
   }
   blockUsers(userIds: string[]) {
     return this.http.put(`${backend}/auth/users/block`, null, {

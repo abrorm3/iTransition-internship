@@ -30,14 +30,22 @@ export class UserManagementComponent implements OnInit {
       console.log(this.users); // Assign the updated users array
       const userIdFromLocalStorage = localStorage.getItem('userId');
       console.log(userIdFromLocalStorage);
-      this.users.forEach((user) => {
-        if (user._id == userIdFromLocalStorage) {
-          if (user.status === 'Blocked') {
-            console.log('User is blocked.');
-            this.router.navigate(['/auth']);
-          }
-        }
-      });
+
+      const blockedUser = this.users.find(
+        (user) =>
+          user._id === userIdFromLocalStorage && user.status === 'Blocked'
+      );
+      if (blockedUser) {
+        console.log('User is blocked.');
+        this.router.navigate(['/auth']);
+      }
+      const isUserInList = this.users.some(
+        (user) => user._id === userIdFromLocalStorage
+      );
+      if (!isUserInList) {
+        console.log('User not found or blocked. Navigating back to /auth.');
+        this.router.navigate(['/auth']);
+      }
     });
   }
 
@@ -63,6 +71,7 @@ export class UserManagementComponent implements OnInit {
     );
   }
   blockSelected() {
+    this.selectAll = false;
     const selectedUserIds = this.users
       .filter((user) => user.selected)
       .map((user) => user._id);
@@ -82,6 +91,7 @@ export class UserManagementComponent implements OnInit {
     );
   }
   unblockSelected() {
+    this.selectAll = false;
     const selectedUserIds = this.users
       .filter((user) => user.selected)
       .map((user) => user._id);
@@ -102,6 +112,26 @@ export class UserManagementComponent implements OnInit {
   }
 
   deleteSelected() {
-    // Similar logic to blockSelected()
+    this.selectAll = false;
+    const selectedUserIds = this.users
+      .filter((user) => user.selected)
+      .map((user) => user._id);
+
+    if (selectedUserIds.length === 0) {
+      console.log('No users selected to delete.');
+      return;
+    }
+
+    this.dataService.deleteUsers(selectedUserIds).subscribe({
+      next: () => {
+        console.log('Selected user(s) deleted successfully.');
+        this.getUsers();
+      },
+      error: (error) => {
+        console.log('Error deleting selected user(s):', error);
+      },
+    });
+
+    this.getUsers();
   }
 }
