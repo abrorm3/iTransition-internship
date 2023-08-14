@@ -1,6 +1,10 @@
 
+<div class="credentials font-lato flex justify-end pr-10 font-bold bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
+  <a class="mr-2" href="https://github.com/abrorm3/iTransition-internship">GitHub</a>
+  <a href="https://www.linkedin.com/in/abror-mukhammadiev-a74b9a205/">LinkedIn</a>
+</div>
 
-  <div class="p-4">
+  <div class="p-4 font-lato">
     <div class="flex justify-between mb-4">
       <div class="flex items-center">
         <input type="checkbox" class="form-checkbox w-6 h-6 mr-3" [(ngModel)]="selectAll" (click)="selectAllChanged()"/>
@@ -41,7 +45,7 @@
         <!-- Loop through users and create table rows -->
         <tr *ngFor="let user of users" class="hover:bg-gray-200">
           <td class="px-6 py-4 whitespace-nowrap">
-            <input type="checkbox" class="form-checkbox" [(ngModel)]="user.selected"/>
+            <input type="checkbox" class="form-checkbox w-4 h-4" [(ngModel)]="user.selected"/>
           </td>
           <td class="px-6 py-4">{{ user._id }}</td>
           <td class="px-6 py-4"  [ngClass]="{'text-green-600': user._id === userIdFromLocalStorage}">{{ user._id === userIdFromLocalStorage ? 'Your account' : user.name }}</td>
