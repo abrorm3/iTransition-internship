@@ -39,6 +39,8 @@ export class AuthService {
       map(response => {
         if (response.token) {
           this.setAuthToken(response.token);
+        }
+        if (response.userId) {
           this.setUserId(response.userId);
         }
         return response;

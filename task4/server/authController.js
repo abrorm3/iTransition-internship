@@ -43,7 +43,7 @@ class authController {
       });
       await user.save();
       const token = generateAccessToken(user._id, user.roles);
-      return res.json({ message: "Registration successful", token });
+      return res.json({ message: "Registration successful", userId: user._id,token});
     } catch (e) {
       console.log(e);
       res.status(400).json({ message: "Registration error" });
